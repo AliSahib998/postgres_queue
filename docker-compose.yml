@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  mail-service:
+    build: .
+    restart: always
+    ports:
+      - "8086:8086"
+    depends_on:
+      - postgres
+    networks:
+      - queue-network
+
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test
+    ports:
+      - "5432:5432"
+    volumes:
+      - data:/var/lib/postgresql/data
+    networks:
+      - queue-network
+
+volumes:
+  data:
+
+networks:
+  queue-network:
+    driver: bridge
+
