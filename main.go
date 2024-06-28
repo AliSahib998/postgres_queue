@@ -11,6 +11,7 @@ import (
 	"mail-service/internal/configs"
 	"mail-service/internal/consumer"
 	"mail-service/internal/controller"
+	"mail-service/internal/database"
 	"mail-service/internal/publisher"
 	"mail-service/internal/router"
 )
@@ -47,12 +48,17 @@ func main() {
 		log.Fatal(err)
 	}
 
-	messagePublisher, err := publisher.NewPGQPublisher(appConfigs.DB)
+	db, err := database.ConnectDb(appConfigs.DB)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pgqConsumer, err := consumer.NewPGQConsumer(appConfigs.DB, controller.NewController(appConfigs, messagePublisher))
+	messagePublisher, err := publisher.NewPGQPublisher(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pgqConsumer, err := consumer.NewPGQConsumer(db, controller.NewController(appConfigs, messagePublisher))
 	if err != nil {
 		log.Fatal(err)
 	}
