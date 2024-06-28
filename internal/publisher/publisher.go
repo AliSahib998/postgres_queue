@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"go.dataddo.com/pgq"
-	"mail-service/internal/configs"
-	"mail-service/internal/database"
 )
 
 type Publisher interface {
@@ -18,11 +16,7 @@ type PGQPublisher struct {
 	pgq.Publisher
 }
 
-func NewPGQPublisher(config *configs.DB) (*PGQPublisher, error) {
-	db, err := database.ConnectDb(config)
-	if err != nil {
-		return nil, err
-	}
+func NewPGQPublisher(db *sql.DB) (*PGQPublisher, error) {
 	publisher := pgq.NewPublisher(db)
 	return &PGQPublisher{db: db, Publisher: publisher}, nil
 }
